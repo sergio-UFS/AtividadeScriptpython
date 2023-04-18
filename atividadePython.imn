@@ -1,0 +1,134 @@
+node n1 {
+    type router
+    model router
+    network-config {
+	hostname n1
+	!
+	interface eth2
+	 ip address 192.0.4.1/24
+	 ipv6 address 2001:db8:2::1/64
+	!
+	interface eth1
+	 ip address 192.0.3.1/24
+	 ipv6 address 2001:db8:1::1/64
+	!
+	interface eth0
+	 ip address 192.0.2.1/24
+	 ipv6 address 2001:db8:0::1/64
+	!
+    }
+    canvas c1
+    iconcoords {378.0 239.0}
+    labelcoords {378.0 271.0}
+    interface-peer {eth0 n3}
+    interface-peer {eth1 n2}
+    interface-peer {eth2 n4}
+}
+
+node n2 {
+    type router
+    model host
+    network-config {
+	hostname Servidor
+	!
+	interface eth0
+	 ip address 192.0.3.10/24
+	 ipv6 address 2001:db8:1::10/64
+	!
+    }
+    canvas c1
+    iconcoords {171.0 188.0}
+    labelcoords {171.0 220.0}
+    interface-peer {eth0 n1}
+    custom-config {
+	custom-config-id service:UserDefined
+	custom-command UserDefined
+	config {
+	files=('teste.html', )
+	cmdup=('python -m SimpleHTTPServer 8081', )
+	meta=Servidor .
+	}
+    }
+    custom-config {
+	custom-config-id service:UserDefined:teste.html
+	custom-command teste.html
+	config {
+	<html>
+		<body>
+			Porta 8081
+		</body>
+	</html>
+	}
+    }
+    services {DefaultRoute SSH UserDefined}
+}
+
+node n3 {
+    type router
+    model host
+    network-config {
+	hostname SErvidorBUP
+	!
+	interface eth0
+	 ip address 192.0.2.10/24
+	 ipv6 address 2001:db8:0::10/64
+	!
+    }
+    canvas c1
+    iconcoords {168.0 258.0}
+    labelcoords {168.0 290.0}
+    interface-peer {eth0 n1}
+}
+
+node n4 {
+    type router
+    model PC
+    network-config {
+	hostname User
+	!
+	interface eth0
+	 ip address 192.0.4.20/24
+	 ipv6 address 2001:db8:2::20/64
+	!
+    }
+    canvas c1
+    iconcoords {437.0 107.0}
+    labelcoords {437.0 139.0}
+    interface-peer {eth0 n1}
+}
+
+link l1 {
+    nodes {n3 n1}
+    bandwidth 0
+}
+
+link l2 {
+    nodes {n2 n1}
+    bandwidth 0
+}
+
+link l3 {
+    nodes {n1 n4}
+    bandwidth 0
+}
+
+canvas c1 {
+    name {Canvas1}
+}
+
+option global {
+    interface_names no
+    ip_addresses yes
+    ipv6_addresses yes
+    node_labels yes
+    link_labels yes
+    show_api no
+    background_images no
+    annotations yes
+    grid yes
+    traffic_start 0
+}
+
+option session {
+}
+
